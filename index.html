@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GRIND">
+<meta name="theme-color" content="#111114">
+<title>GRIND</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#111114;color:#fff;font-family:'Inter',-apple-system,sans-serif;overflow-x:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);min-height:100vh}
+button{-webkit-appearance:none;font-family:inherit;cursor:pointer}
+.container{max-width:520px;margin:0 auto}
+.header{padding:24px 20px 0;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.logo{font-family:'Archivo Black',sans-serif;font-size:26px;letter-spacing:2px;line-height:1;background:linear-gradient(135deg,#ff4d4d,#ffc44d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:#555;font-size:11px;margin-top:4px;letter-spacing:3px;font-weight:600}
+.rest-btn{background:#1e1e22;border:1px solid #2a2a2e;border-radius:14px;padding:10px 16px;color:#ff4d4d;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;letter-spacing:.5px}
+.calendar{padding:20px 20px 0}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day-btn{border-radius:14px;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .2s ease;position:relative;overflow:hidden;border:2px solid transparent}
+.day-label{font-size:10px;font-weight:700;letter-spacing:1px}
+.day-icon{font-size:20px}
+.day-type{font-size:9px;font-weight:700;letter-spacing:.5px;opacity:.9}
+.day-progress-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:#2a2a2e}
+.day-progress-fill{height:100%;border-radius:2px;transition:width .3s ease}
+.calendar-hint{color:#444;font-size:10px;margin-top:8px;text-align:center;letter-spacing:.5px}
+.detail{padding:20px 20px 100px}
+.detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.detail-title{font-family:'Archivo Black',sans-serif;font-size:20px;letter-spacing:1px}
+.detail-day{color:#555;font-size:12px;margin-top:2px}
+.progress-badge{border-radius:12px;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}
+.rest-card{background:#1a1a1e;border-radius:20px;padding:48px 24px;text-align:center;border:1px solid #222}
+.rest-card p{color:#666;font-size:15px;margin-top:12px;font-weight:500}
+.exercises{display:flex;flex-direction:column;gap:8px}
+.exercise-card{border-radius:16px;padding:14px 16px;transition:all .2s ease;display:flex;align-items:center;gap:12px}
+.check-btn{width:28px;height:28px;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s ease;font-size:14px;font-weight:700;color:#fff}
+.exercise-info{flex:1;min-width:0}
+.exercise-top{display:flex;justify-content:space-between;align-items:center}
+.exercise-name{font-size:14px;font-weight:600}
+.muscle-tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.5px;flex-shrink:0}
+.sets-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.sets-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:#555;font-weight:500}
+.set-buttons{display:flex;gap:4px;margin-left:4px}
+.set-btn{width:24px;height:24px;border-radius:6px;border:none;font-size:10px;font-weight:700;transition:all .15s ease;font-family:'JetBrains Mono',monospace}
+.legend{margin-top:24px;padding:16px;background:#1a1a1e;border-radius:14px;border:1px solid #222}
+.legend-title{color:#444;font-size:10px;font-weight:700;letter-spacing:2px;display:block;margin-bottom:10px}
+.legend-items{display:flex;flex-wrap:wrap;gap:12px}
+.legend-item{display:flex;align-items:center;gap:6px}
+.legend-dot{width:10px;height:10px;border-radius:3px}
+.legend-text{color:#666;font-size:11px;font-weight:500}
+.legend-sets{margin-top:10px;display:flex;align-items:center;gap:6px}
+.legend-set-example{display:flex;gap:3px}
+.legend-set-box{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-family:'JetBrains Mono',monospace}
+.reset-btn{margin-top:16px;width:100%;padding:12px;border-radius:12px;border:1px solid #2a2a2e;background:#1a1a1e;color:#555;font-size:12px;font-weight:600;letter-spacing:1px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:999;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.modal{background:#1a1a1e;border-radius:20px;padding:28px;width:300px;border:1px solid #2a2a2e}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{color:#fff;font-size:16px;font-family:'Archivo Black',sans-serif;letter-spacing:1px}
+.close-btn{background:none;border:none;color:#666;font-size:20px}
+.type-option{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:none;width:100%;margin-bottom:8px;transition:all .15s ease}
+.type-option-icon{font-size:22px}
+.type-option-label{font-weight:700;font-size:14px;letter-spacing:.5px}
+.timer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.timer-modal{background:#1a1a1e;border-radius:24px;padding:40px 36px;width:320px;text-align:center;border:1px solid #2a2a2e;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.timer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}
+.timer-title{color:#fff;font-size:18px;font-family:'Archivo Black',sans-serif;letter-spacing:1px}
+.timer-circle{position:relative;width:180px;height:180px;margin:0 auto 28px}
+.timer-display{font-family:'JetBrains Mono',monospace;font-size:44px;color:#fff;font-weight:700;letter-spacing:2px}
+.timer-done{color:#4dff91;font-size:13px;font-weight:600;margin-top:4px;letter-spacing:1px}
+.duration-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.duration-btn{padding:8px 14px;border-radius:10px;border:none;font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.timer-actions{display:flex;gap:10px;justify-content:center}
+.timer-action-btn{padding:14px 32px;border-radius:14px;border:none;font-size:15px;font-weight:700;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var EXERCISE_DB={Push:[{name:"Floor Dumbbell Press",sets:4,reps:"10-12",muscle:"Chest"},{name:"Dumbbell Shoulder Press",sets:4,reps:"10-12",muscle:"Shoulders"},{name:"Push-Ups",sets:3,reps:"15-20",muscle:"Chest"},{name:"Dumbbell Lateral Raises",sets:3,reps:"12-15",muscle:"Shoulders"},{name:"Diamond Push-Ups",sets:3,reps:"12-15",muscle:"Triceps"},{name:"Overhead Tricep Extension",sets:3,reps:"12-15",muscle:"Triceps"},{name:"Band Chest Flyes",sets:3,reps:"15",muscle:"Chest"},{name:"Dumbbell Front Raises",sets:3,reps:"12",muscle:"Shoulders"}],Pull:[{name:"Dumbbell Bent-Over Rows",sets:4,reps:"10-12",muscle:"Back"},{name:"Band Lat Pulldowns",sets:4,reps:"12-15",muscle:"Back"},{name:"Dumbbell Bicep Curls",sets:3,reps:"12",muscle:"Biceps"},{name:"Hammer Curls",sets:3,reps:"12",muscle:"Biceps"},{name:"Band Face Pulls",sets:3,reps:"15-20",muscle:"Rear Delts"},{name:"Dumbbell Reverse Flyes",sets:3,reps:"12-15",muscle:"Rear Delts"},{name:"Dumbbell Shrugs",sets:3,reps:"15",muscle:"Traps"},{name:"Band Pull-Aparts",sets:3,reps:"20",muscle:"Upper Back"}],Legs:[{name:"Goblet Squats",sets:4,reps:"12-15",muscle:"Quads"},{name:"Dumbbell Romanian Deadlifts",sets:4,reps:"10-12",muscle:"Hamstrings"},{name:"Bulgarian Split Squats",sets:3,reps:"10/leg",muscle:"Quads"},{name:"Dumbbell Lunges",sets:3,reps:"12/leg",muscle:"Quads"},{name:"Dumbbell Glute Bridges",sets:3,reps:"15",muscle:"Glutes"},{name:"Calf Raises (Weighted)",sets:4,reps:"20",muscle:"Calves"},{name:"Sumo Dumbbell Squats",sets:3,reps:"12-15",muscle:"Inner Thigh"},{name:"Band Leg Curls",sets:3,reps:"15",muscle:"Hamstrings"}],Cardio:[{name:"Burpees",sets:3,reps:"12",muscle:"Full Body"},{name:"Jump Squats",sets:3,reps:"15",muscle:"Legs"},{name:"Mountain Climbers",sets:3,reps:"30s",muscle:"Core"},{name:"High Knees",sets:3,reps:"30s",muscle:"Legs"},{name:"Shadow Boxing",sets:3,reps:"60s",muscle:"Full Body"},{name:"Jumping Jacks",sets:3,reps:"30",muscle:"Full Body"},{name:"Plank to Push-Up",sets:3,reps:"10",muscle:"Core"},{name:"Skater Jumps",sets:3,reps:"20",muscle:"Legs"}]};
+var DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+var FULL_DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+var WORKOUT_TYPES=["Push","Pull","Legs","Cardio","Rest"];
+var TYPE_COLORS={Push:{bg:"#ff4d4d",dim:"rgba(255,77,77,0.12)",text:"#ff6b6b"},Pull:{bg:"#4dabff",dim:"rgba(77,171,255,0.12)",text:"#6db8ff"},Legs:{bg:"#ffc44d",dim:"rgba(255,196,77,0.12)",text:"#ffd06b"},Cardio:{bg:"#4dff91",dim:"rgba(77,255,145,0.12)",text:"#6bffaa"},Rest:{bg:"#888",dim:"rgba(136,136,136,0.08)",text:"#aaa"}};
+var TYPE_ICONS={Push:"\u2B06",Pull:"\u2B07",Legs:"\uD83E\uDDB5",Cardio:"\u2665",Rest:"\uD83D\uDE34"};
+var STORAGE_KEY="grind_app_data";
+var state={schedule:{Mon:"Push",Tue:"Pull",Wed:"Legs",Thu:"Cardio",Fri:"Rest",Sat:"Rest",Sun:"Rest"},selectedDay:null,checked:{},sets:{},editingDay:null,showTimer:false,timerDuration:90,timerLeft:null,timerRunning:false};
+var timerInterval=null,audioCtx=null;
+
+function loadState(){try{var r=localStorage.getItem(STORAGE_KEY);if(r){var s=JSON.parse(r);if(s.schedule)state.schedule=s.schedule;if(s.checked)state.checked=s.checked;if(s.sets)state.sets=s.sets}}catch(e){}}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({schedule:state.schedule,checked:state.checked,sets:state.sets}))}catch(e){}}
+function getTodayIndex(){var d=new Date().getDay();return d===0?6:d-1}
+function getExercises(day){var t=state.schedule[day];if(!t||t==="Rest")return[];return EXERCISE_DB[t]||[]}
+function getDayProgress(day){var exs=getExercises(day);if(exs.length===0)return 0;var done=0;for(var i=0;i<exs.length;i++){if(state.checked[day+"-"+i])done++}return Math.round((done/exs.length)*100)}
+function playBeep(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=880;g.gain.value=0.3;o.start();o.stop(audioCtx.currentTime+0.15);setTimeout(function(){var o2=audioCtx.createOscillator(),g2=audioCtx.createGain();o2.connect(g2);g2.connect(audioCtx.destination);o2.frequency.value=1100;g2.gain.value=0.3;o2.start();o2.stop(audioCtx.currentTime+0.25)},200)}catch(e){}}
+
+function render(){
+var app=document.getElementById("app"),todayIdx=getTodayIndex(),selDay=state.selectedDay,curType=selDay?state.schedule[selDay]:"Rest",curColor=TYPE_COLORS[curType]||TYPE_COLORS.Rest,exercises=selDay?getExercises(selDay):[],h='<div class="container">';
+h+='<div class="header"><div><div class="logo">GRIND</div><div class="subtitle">HOME WORKOUT TRACKER</div></div>';
+h+='<button class="rest-btn" onclick="openTimer()"><span style="font-size:16px">\u23F1</span> REST</button></div>';
+h+='<div class="calendar"><div class="calendar-grid">';
+for(var i=0;i<DAYS.length;i++){var day=DAYS[i],type=state.schedule[day],color=TYPE_COLORS[type]||TYPE_COLORS.Rest,isSel=selDay===day,isToday=i===todayIdx,prog=getDayProgress(day),bg=isSel?color.dim:"#1a1a1e",border=isSel?"2px solid "+color.bg:isToday?"2px solid #333":"2px solid transparent",lc=isToday?"#fff":"#555";
+h+='<button class="day-btn" style="background:'+bg+';border:'+border+'" onclick="selectDay(\''+day+'\')" ondblclick="editDay(\''+day+'\')">';
+h+='<span class="day-label" style="color:'+lc+'">'+day.toUpperCase()+'</span>';
+h+='<span class="day-icon">'+TYPE_ICONS[type]+'</span>';
+h+='<span class="day-type" style="color:'+color.text+'">'+type+'</span>';
+if(type!=="Rest")h+='<div class="day-progress-bar"><div class="day-progress-fill" style="width:'+prog+'%;background:'+color.bg+'"></div></div>';
+h+='</button>'}
+h+='</div><p class="calendar-hint">Double-tap a day to change its workout type</p></div>';
+if(selDay){
+h+='<div class="detail"><div class="detail-header"><div>';
+h+='<div class="detail-title" style="color:'+curColor.text+'">'+TYPE_ICONS[curType]+' '+curType.toUpperCase()+' DAY</div>';
+h+='<div class="detail-day">'+FULL_DAYS[DAYS.indexOf(selDay)]+'</div></div>';
+if(curType!=="Rest"&&exercises.length>0)h+='<div class="progress-badge" style="background:'+curColor.dim+';color:'+curColor.text+'">'+getDayProgress(selDay)+'%</div>';
+h+='</div>';
+if(curType==="Rest"){h+='<div class="rest-card"><span style="font-size:48px">\uD83D\uDE34</span><p>Rest day \u2014 recover and come back stronger</p></div>'}
+else{h+='<div class="exercises">';
+for(var j=0;j<exercises.length;j++){var ex=exercises[j],isDone=!!state.checked[selDay+"-"+j],cardBg=isDone?curColor.dim:"#1a1a1e",cardBorder=isDone?"1px solid "+curColor.bg+"33":"1px solid #222",cardOp=isDone?"0.7":"1",chkBg=isDone?curColor.bg:"#2a2a2e",nc=isDone?"#666":"#fff",nd=isDone?"line-through":"none";
+h+='<div class="exercise-card" style="background:'+cardBg+';border:'+cardBorder+';opacity:'+cardOp+'">';
+h+='<button class="check-btn" style="background:'+chkBg+'" onclick="toggleCheck(\''+selDay+'\','+j+')">'+(isDone?"\u2713":"")+'</button>';
+h+='<div class="exercise-info"><div class="exercise-top">';
+h+='<span class="exercise-name" style="color:'+nc+';text-decoration:'+nd+'">'+ex.name+'</span>';
+h+='<span class="muscle-tag" style="color:'+curColor.text+';background:'+curColor.dim+'">'+ex.muscle+'</span>';
+h+='</div><div class="sets-row"><span class="sets-label">'+ex.sets+'\u00D7'+ex.reps+'</span><div class="set-buttons">';
+for(var s=0;s<ex.sets;s++){var sd=!!state.sets[selDay+"-"+j+"-"+s],sb=sd?curColor.bg:"#2a2a2e",sc=sd?"#fff":"#555";
+h+='<button class="set-btn" style="background:'+sb+';color:'+sc+'" onclick="toggleSet(\''+selDay+'\','+j+','+s+')">'+(s+1)+'</button>'}
+h+='</div></div></div></div>'}
+h+='</div>'}
+h+='<div class="legend"><span class="legend-title">LEGEND</span><div class="legend-items">';
+var ts=["Push","Pull","Legs","Cardio","Rest"];
+for(var t=0;t<ts.length;t++)h+='<div class="legend-item"><div class="legend-dot" style="background:'+TYPE_COLORS[ts[t]].bg+'"></div><span class="legend-text">'+ts[t]+'</span></div>';
+h+='</div><div class="legend-sets"><div class="legend-set-example"><div class="legend-set-box" style="background:#2a2a2e;color:#555">1</div><div class="legend-set-box" style="background:#ff4d4d;color:#fff">2</div></div><span class="legend-text">Tap numbered buttons to track individual sets</span></div></div>';
+h+='<button class="reset-btn" onclick="resetWeek()">RESET WEEK PROGRESS</button></div>'}
+h+='</div>';
+if(state.editingDay){
+h+='<div class="modal-overlay" onclick="closeEdit(event)"><div class="modal" onclick="event.stopPropagation()">';
+h+='<div class="modal-header"><span class="modal-title">'+FULL_DAYS[DAYS.indexOf(state.editingDay)]+'</span><button class="close-btn" onclick="closeEditModal()">\u2715</button></div>';
+for(var w=0;w<WORKOUT_TYPES.length;w++){var wt=WORKOUT_TYPES[w],wc=TYPE_COLORS[wt],isA=state.schedule[state.editingDay]===wt,oBg=isA?wc.dim:"#222226",oO=isA?"2px solid "+wc.bg:"none",oC=isA?wc.text:"#888";
+h+='<button class="type-option" style="background:'+oBg+';outline:'+oO+'" onclick="setType(\''+wt+'\')"><span class="type-option-icon">'+TYPE_ICONS[wt]+'</span><span class="type-option-label" style="color:'+oC+'">'+wt+'</span></button>'}
+h+='</div></div>'}
+if(state.showTimer){
+var p2=state.timerLeft!==null?((state.timerDuration-state.timerLeft)/state.timerDuration)*100:0,tM=state.timerLeft!==null?Math.floor(state.timerLeft/60):Math.floor(state.timerDuration/60),tS=state.timerLeft!==null?state.timerLeft%60:state.timerDuration%60,circ=2*Math.PI*80,off=circ*(1-p2/100),stk=state.timerLeft===0?"#4dff91":"#ff4d4d";
+h+='<div class="timer-overlay"><div class="timer-modal"><div class="timer-header"><span class="timer-title">REST TIMER</span><button class="close-btn" onclick="closeTimer()">\u2715</button></div>';
+h+='<div class="timer-circle"><svg viewBox="0 0 180 180" style="transform:rotate(-90deg)"><circle cx="90" cy="90" r="80" fill="none" stroke="#2a2a2e" stroke-width="6"/><circle cx="90" cy="90" r="80" fill="none" stroke="'+stk+'" stroke-width="6" stroke-linecap="round" stroke-dasharray="'+circ+'" stroke-dashoffset="'+off+'" style="transition:stroke-dashoffset .3s ease,stroke .3s ease"/></svg>';
+h+='<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="timer-display">'+String(tM).padStart(2,"0")+":"+String(tS).padStart(2,"0")+'</span>';
+if(state.timerLeft===0)h+='<span class="timer-done">DONE!</span>';
+h+='</div></div>';
+if(!state.timerRunning&&state.timerLeft===null){h+='<div class="duration-btns">';var ds=[30,60,90,120,180];for(var d=0;d<ds.length;d++){var dB=state.timerDuration===ds[d]?"#ff4d4d":"#2a2a2e",dC=state.timerDuration===ds[d]?"#fff":"#aaa";h+='<button class="duration-btn" style="background:'+dB+';color:'+dC+'" onclick="setDuration('+ds[d]+')">'+ds[d]+'s</button>'}h+='</div>'}
+h+='<div class="timer-actions">';
+if(!state.timerRunning&&state.timerLeft===null)h+='<button class="timer-action-btn" style="background:#ff4d4d;color:#fff;font-family:\'Archivo Black\',sans-serif;padding:14px 40px" onclick="startTimer()">START</button>';
+if(state.timerRunning)h+='<button class="timer-action-btn" style="background:#ffc44d;color:#111" onclick="pauseTimer()">PAUSE</button>';
+if(!state.timerRunning&&state.timerLeft!==null&&state.timerLeft>0)h+='<button class="timer-action-btn" style="background:#4dff91;color:#111" onclick="resumeTimer()">RESUME</button>';
+if(state.timerLeft!==null)h+='<button class="timer-action-btn" style="background:#2a2a2e;color:#aaa" onclick="resetTimer()">RESET</button>';
+h+='</div></div></div>'}
+app.innerHTML=h}
+
+function selectDay(d){state.selectedDay=d;render()}
+function editDay(d){state.editingDay=d;render()}
+function closeEditModal(){state.editingDay=null;render()}
+function closeEdit(e){if(e.target===e.currentTarget)closeEditModal()}
+function setType(t){state.schedule[state.editingDay]=t;state.editingDay=null;saveState();render()}
+function toggleCheck(d,i){var k=d+"-"+i;state.checked[k]=!state.checked[k];saveState();render()}
+function toggleSet(d,i,s){var k=d+"-"+i+"-"+s;state.sets[k]=!state.sets[k];saveState();render()}
+function resetWeek(){if(confirm("Reset all progress for this week?")){state.checked={};state.sets={};saveState();render()}}
+function openTimer(){state.showTimer=true;render()}
+function closeTimer(){clearInterval(timerInterval);state.showTimer=false;state.timerRunning=false;state.timerLeft=null;render()}
+function setDuration(d){state.timerDuration=d;render()}
+function startTimer(){state.timerLeft=state.timerDuration;state.timerRunning=true;render();timerInterval=setInterval(function(){if(state.timerLeft<=1){state.timerLeft=0;state.timerRunning=false;clearInterval(timerInterval);playBeep()}else{state.timerLeft--}render()},1000)}
+function pauseTimer(){clearInterval(timerInterval);state.timerRunning=false;render()}
+function resumeTimer(){state.timerRunning=true;render();timerInterval=setInterval(function(){if(state.timerLeft<=1){state.timerLeft=0;state.timerRunning=false;clearInterval(timerInterval);playBeep()}else{state.timerLeft--}render()},1000)}
+function resetTimer(){clearInterval(timerInterval);state.timerRunning=false;state.timerLeft=null;render()}
+
+loadState();state.selectedDay=DAYS[getTodayIndex()];render();
+</script>
+</body>
+</html>
